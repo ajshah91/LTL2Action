@@ -7,6 +7,23 @@ given template(s).
 """
 
 import random
+import os
+import numpy as np
+import dill
+
+class TransferSampler():
+    def __init__(self, set_type = 'train', typ = 'mixed', size = None):
+        dataset_file = os.path.join('..','specification_datasets',f'{set_type}_{typ}.pkl')
+        with open(dataset_file, 'rb') as file:
+            formulas = dill.load(file)
+        if size == None:
+            size = len(formulas)
+        elif size > len(formulas):
+            size = len(formulas)
+        self.formulas = formulas[0:size]
+    
+    def sample(self):
+        return random.choice()
 
 class LTLSampler():
     def __init__(self, propositions):
@@ -194,6 +211,9 @@ def getLTLSampler(sampler_id, propositions):
         return AdversarialEnvSampler(propositions)
     elif (tokens[0] == "Eventually"):
         return EventuallySampler(propositions, tokens[1], tokens[2], tokens[3], tokens[4])
+    elif (tokens[0] == 'Transfer'):
+        return TransferSampler(tokens[1],tokens[2],tokens[3])
     else: # "Default"
         return DefaultSampler(propositions)
+    
 
